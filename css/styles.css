@@ -194,7 +194,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .probador { display: grid; gap: 1.5rem; }
 @media (min-width: 900px) { .probador { grid-template-columns: 1fr 1fr; align-items: start; } }
 .botones-patron { display: grid; grid-template-columns: repeat(2, 1fr); gap: .75rem; }
-@media (min-width: 520px) { .botones-patron { grid-template-columns: repeat(3, 1fr); } }
+@media (min-width: 520px) { .botones-patron { grid-template-columns: repeat(4, 1fr); } }
 .boton-patron {
   min-height: 86px; padding: .75rem; border-radius: var(--radio-sm);
   background: var(--asfalto); border: 2px solid var(--sombra); cursor: pointer;

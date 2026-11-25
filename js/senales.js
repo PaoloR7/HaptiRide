@@ -33,7 +33,8 @@
     vehiculo: { nombre: 'Aviso de vehículo', ritmo: ['r', 'r', 'r', 'r', 'r'], lado: 'ambos', flecha: '⚠', descripcion: '5 pulsos rápidos', alerta: true, sinRepeticion: true },
     llegada: { nombre: 'Llegada', ritmo: ['L', 'c', 'L'], lado: 'ambos', flecha: '◎', descripcion: 'largo, corto, largo' },
     preaviso: { nombre: 'Preaviso de giro', ritmo: ['c'], lado: 'ambos', flecha: '…', descripcion: '1 pulso corto', sinRepeticion: true },
-    perdida: { nombre: 'Aviso de señal perdida', ritmo: ['L', 'L'], lado: 'ambos', flecha: '!', descripcion: '2 pulsos largos', alerta: true, sinRepeticion: true }
+    perdida: { nombre: 'Aviso de señal perdida', ritmo: ['L', 'L'], lado: 'ambos', flecha: '!', descripcion: '2 pulsos largos', alerta: true, sinRepeticion: true },
+    desvio: { nombre: 'Aviso de desvío', ritmo: ['L', 'L', 'L'], lado: 'ambos', flecha: '⤺', descripcion: '3 pulsos largos', alerta: true, sinRepeticion: true }
   };
 
   function leerConfig() {

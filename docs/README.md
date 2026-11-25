@@ -44,6 +44,7 @@ favicon.ico, .gitignore
 | Preaviso de giro (≈90 m antes) | 1 pulso corto |
 | Vehículo cercano | 5 pulsos rápidos |
 | Llegada | largo · corto · largo |
+| Desvío de ruta (más de 40 m) | 3 pulsos largos |
 | Señal perdida | 2 pulsos largos |
 
 La configuración cambia la duración de cada pulso (corta, media o larga), las repeticiones (1, 2 o 3) y el intervalo entre pulsos. El navegador no puede cambiar la fuerza del motor, así que la **intensidad** se representa con pulsos más largos o más cortos.
@@ -98,5 +99,4 @@ Para probar en la computadora, abre la carpeta con una extensión tipo *Live Ser
 - La vibración solo funciona con la pantalla encendida y la pestaña abierta. Por eso existe el modo sin mirar, que mantiene la pantalla encendida.
 - El celular vibra entero: no puede indicar un lado físico. El lado se distingue por el ritmo.
 - El aviso de vehículo es simulado. Detectar vehículos de verdad necesitaría un sensor (etapa futura).
-- El desvío se muestra en pantalla; no tiene un patrón de vibración propio.
 - Nominatim y OSRM son servicios públicos gratuitos con límites de uso. Si no responden, la app ofrece reintentar o usar la ruta de demostración.

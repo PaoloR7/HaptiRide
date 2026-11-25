@@ -218,6 +218,8 @@
     };
     u.textContent = textos[sistema.ubicacion];
     bU.hidden = sistema.ubicacion === 'concedida' || sistema.ubicacion === 'nodisponible';
+    // Si ya está bloqueada, el navegador no vuelve a preguntar: el botón sirve para reintentar después de cambiar los ajustes
+    if (!bU.disabled) bU.textContent = sistema.ubicacion === 'denegada' ? 'Ya la activé, volver a intentar' : 'Permitir ubicación';
     const cfg = S.leerConfig();
     $('permiso-vibracion-texto').textContent = !S.puedeVibrar
       ? 'Este navegador no puede vibrar (iPhone o computadora). Verás las señales en pantalla. Para sentirlas usa Chrome en Android.'
@@ -236,7 +238,7 @@
     pedirUbicacion().then(function () { toast('Ubicación permitida'); }).catch(function (err) {
       // Si el permiso ya fue rechazado, el navegador no vuelve a preguntar: hay que explicarlo
       toast(err && err.code === 1 ? 'El navegador tiene la ubicación bloqueada. Sigue los pasos que aparecen arriba.' : 'No se pudo obtener la ubicación. Revisa que el GPS esté encendido.');
-    }).then(function () { boton.disabled = false; boton.textContent = 'Permitir ubicación'; });
+    }).then(function () { boton.disabled = false; pintarPermisos(); });
   });
   $('permiso-vibracion').addEventListener('click', function () {
     const r = S.reproducir('derecha');
@@ -952,7 +954,7 @@
     recorrido.desviado = true;
     $('recalcular').hidden = false;
     $('aviso-nav').innerHTML = '<div class="aviso aviso--ambar" role="alert"><strong>Te saliste de la ruta.</strong> Estás a más de ' + DESVIO_M + ' m del camino. Regresa o toca «Recalcular».</div>';
-    registrar('Desvío', 'Fuera de la ruta (aviso visual)');
+    senal('desvio', 'Estás a más de ' + DESVIO_M + ' m de la ruta');
     actualizarNav();
   }
   function volverARuta() {
@@ -962,11 +964,29 @@
     registrar('Ruta', 'De vuelta en la ruta');
   }
   $('simular-desvio').addEventListener('click', function () {
-    if (!recorrido || recorrido.desviado || recorrido.llegado) return;
-    // Se mueve la posición simulada 60 m hacia un lado: la posición sí existe, por eso se puede afirmar el desvío
-    recorrido.pos = desplazar(puntoEn(recorrido.ruta, recorrido.s), 0, 60);
-    const proy = proyectar(recorrido.pos, recorrido.ruta);
-    if (proy.desvio > DESVIO_M) marcarDesvio();
+    if (!recorrido || recorrido.llegado) return;
+    if (recorrido.desviado) { toast('Ya estás fuera de la ruta: toca «Recalcular»'); return; }
+    // Se mueve la posición simulada hacia un costado de la calle (perpendicular a la dirección de la ruta).
+    // La posición sí existe, por eso se puede afirmar el desvío (HU-041).
+    const r = recorrido.ruta;
+    const a = puntoEn(r, Math.max(0, recorrido.s - 5)), b = puntoEn(r, Math.min(r.total, recorrido.s + 5));
+    const k = Math.cos(a[0] * Math.PI / 180) * 111320, m = 110540;
+    let este = (b[1] - a[1]) * k, norte = (b[0] - a[0]) * m;
+    const largo = Math.hypot(este, norte) || 1;
+    este /= largo; norte /= largo;
+    const base = puntoEn(r, recorrido.s);
+    // Se prueba a la derecha y a la izquierda, cada vez más lejos, hasta quedar fuera de la ruta
+    for (const metros of [60, 90, 130]) {
+      for (const lado of [1, -1]) {
+        const p = desplazar(base, -este * metros * lado, norte * metros * lado);
+        if (proyectar(p, r).desvio > DESVIO_M) {
+          recorrido.pos = p;
+          marcarDesvio();
+          return;
+        }
+      }
+    }
+    toast('No se pudo simular el desvío en este punto. Inténtalo unos metros más adelante.');
   });
   $('recalcular').addEventListener('click', function () {
     if (!recorrido) return;

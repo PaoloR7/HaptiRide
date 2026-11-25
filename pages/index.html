@@ -7,7 +7,7 @@
   <meta name="description" content="HaptiRide guía al ciclista con vibraciones del celular: cada giro tiene su propio ritmo, para que no tengas que mirar la pantalla ni usar audífonos.">
   <meta name="theme-color" content="#0B1216">
   <link rel="icon" href="../favicon.ico">
-  <link rel="stylesheet" href="../css/styles.css">
+  <link rel="stylesheet" href="../css/styles.css?v=5">
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -97,6 +97,7 @@
               <tr><td>Preaviso de giro</td><td><span class="ritmo" aria-label="1 pulso corto"><i class="c"></i></span> 1 pulso corto</td><td>Se acerca una maniobra (unos 90 m antes).</td></tr>
               <tr><td>Aviso de vehículo</td><td><span class="ritmo" aria-label="5 pulsos rápidos"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></span> 5 rápidos</td><td>Atención: vehículo cercano.</td></tr>
               <tr><td>Llegada</td><td><span class="ritmo" aria-label="largo, corto, largo"><i class="L"></i><i class="c"></i><i class="L"></i></span> largo-corto-largo</td><td>Llegaste a tu destino.</td></tr>
+              <tr><td>Desvío de ruta</td><td><span class="ritmo" aria-label="3 pulsos largos"><i class="L"></i><i class="L"></i><i class="L"></i></span> 3 largos</td><td>Te saliste de la ruta (más de 40 m).</td></tr>
               <tr><td>Señal perdida</td><td><span class="ritmo" aria-label="2 pulsos largos"><i class="L"></i><i class="L"></i></span> 2 largos</td><td>Se perdió la ubicación o la conexión.</td></tr>
             </tbody>
           </table>
@@ -119,6 +120,8 @@
               <button class="boton-patron" data-patron="preaviso" aria-pressed="false"><span class="icono" aria-hidden="true">…</span><span class="nombre">Preaviso</span><span class="desc">1 pulso corto</span></button>
               <button class="boton-patron" data-patron="vehiculo" aria-pressed="false"><span class="icono" aria-hidden="true">⚠</span><span class="nombre">Vehículo</span><span class="desc">5 rápidos</span></button>
               <button class="boton-patron" data-patron="llegada" aria-pressed="false"><span class="icono" aria-hidden="true">◎</span><span class="nombre">Llegada</span><span class="desc">largo-corto-largo</span></button>
+              <button class="boton-patron" data-patron="desvio" aria-pressed="false"><span class="icono" aria-hidden="true">⤺</span><span class="nombre">Desvío</span><span class="desc">3 largos</span></button>
+              <button class="boton-patron" data-patron="perdida" aria-pressed="false"><span class="icono" aria-hidden="true">!</span><span class="nombre">Señal perdida</span><span class="desc">2 largos</span></button>
             </div>
           </div>
           <div class="tarjeta">
@@ -212,7 +215,7 @@
     </div>
   </footer>
 
-  <script src="../js/senales.js"></script>
-  <script src="../js/main.js"></script>
+  <script src="../js/senales.js?v=5"></script>
+  <script src="../js/main.js?v=5"></script>
 </body>
 </html>
