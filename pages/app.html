@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>HaptiRide · App web</title>
+  <meta name="description" content="App web de HaptiRide: planifica tu ruta en bicicleta y recibe las indicaciones como vibraciones del celular.">
+  <meta name="theme-color" content="#0B1216">
+  <link rel="icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/leaflet.css">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <a class="saltar" href="#app-principal">Saltar al contenido</a>
+  <div class="app">
+    <header class="app-barra">
+      <div class="contenedor app-barra__fila">
+        <a class="marca" href="index.html" aria-label="HaptiRide, volver a la página principal">
+          <img src="../assets/icons/logo.svg" alt="" width="34" height="34">
+          <span>HaptiRide</span>
+        </a>
+        <!-- HU-024 · Estado de ubicación, vibración y conexión -->
+        <div class="estado-chips" aria-label="Estado del sistema">
+          <a class="chip" id="chip-ubicacion" href="#permisos">Ubicación</a>
+          <a class="chip" id="chip-vibracion" href="#permisos">Vibración</a>
+          <a class="chip" id="chip-conexion" href="#permisos">Conexión</a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="tabbar" aria-label="Secciones de la app">
+      <a href="#panel" data-tab="panel"><span class="ico" aria-hidden="true">⌂</span>Panel</a>
+      <a href="#mapa" data-tab="mapa"><span class="ico" aria-hidden="true">⌖</span>Mapa</a>
+      <a href="#historial" data-tab="historial"><span class="ico" aria-hidden="true">☰</span>Historial</a>
+      <a href="#perfil" data-tab="perfil"><span class="ico" aria-hidden="true">☺</span>Perfil</a>
+      <a href="#configuracion" data-tab="configuracion"><span class="ico" aria-hidden="true">⚙</span>Ajustes</a>
+    </nav>
+
+    <main class="app-principal" id="app-principal" tabindex="-1">
+
+      <!-- ============ HU-001 · Panel principal ============ -->
+      <section class="vista" id="vista-panel" aria-labelledby="t-panel" hidden>
+        <div class="contenedor">
+          <h1 id="t-panel">Hola<span id="saludo-perfil"></span></h1>
+          <div class="accesos">
+            <a class="acceso acceso--destacado" href="#mapa"><span class="ico" aria-hidden="true">⌖</span><strong>Planificar recorrido</strong><span>Busca tu destino y elige la ruta</span></a>
+            <a class="acceso" href="#historial"><span class="ico" aria-hidden="true">☰</span><strong>Historial</strong><span>Tus recorridos guardados</span></a>
+            <a class="acceso" href="#perfil"><span class="ico" aria-hidden="true">☺</span><strong>Perfil</strong><span>Tu tipo de ciclista</span></a>
+            <a class="acceso" href="#configuracion"><span class="ico" aria-hidden="true">⚙</span><strong>Configuración</strong><span>Ajusta las vibraciones</span></a>
+            <a class="acceso" href="index.html#probar"><span class="ico" aria-hidden="true">〰</span><strong>Probar señales</strong><span>Aprende cada patrón</span></a>
+          </div>
+          <h2 style="font-size:1.15rem;margin-top:1.5rem">Última actividad</h2>
+          <div id="ultima-actividad"></div>
+        </div>
+      </section>
+
+      <!-- ============ HU-017, 018, 025, 028, 033, 034, 035 · Planificar ============ -->
+      <section class="vista" id="vista-mapa" aria-labelledby="t-mapa" hidden>
+        <div class="contenedor">
+          <h1 id="t-mapa">Planificar recorrido</h1>
+
+          <div class="tarjeta">
+            <div class="campo">
+              <span style="font-weight:600">Origen</span>
+              <div class="segmentado" role="group" aria-label="Origen del recorrido">
+                <button type="button" data-origen="demo" aria-pressed="true">Punto de prueba</button>
+                <button type="button" data-origen="gps" aria-pressed="false">Mi ubicación (GPS)</button>
+              </div>
+              <span class="ayuda" id="texto-origen">Parque Kennedy, Miraflores (punto fijo para pruebas).</span>
+            </div>
+
+            <form class="campo" id="form-destino" role="search" novalidate>
+              <label for="destino">Destino</label>
+              <div class="buscador">
+                <input class="entrada" id="destino" name="destino" type="search" placeholder="Ej.: UPC Monterrico, Larcomar…" autocomplete="off" aria-describedby="ayuda-destino">
+                <button class="btn btn--primario" type="submit">Buscar</button>
+              </div>
+              <span class="ayuda" id="ayuda-destino">Busca un lugar en Perú. Necesitas conexión a internet.</span>
+              <ul class="resultados" id="resultados" hidden aria-label="Resultados de búsqueda"></ul>
+            </form>
+            <button class="btn btn--secundario btn--sm" id="usar-demo" type="button">Usar ruta de demostración (sin internet)</button>
+          </div>
+
+          <div id="error-ruta" role="alert"></div>
+
+          <div class="mapa" id="mapa-plan" aria-label="Vista previa del recorrido en el mapa"></div>
+
+          <div id="bloque-alternativas" hidden>
+            <h2 style="font-size:1.15rem">Rutas disponibles</h2>
+            <p class="texto-suave" id="nota-alternativas"></p>
+            <div class="alternativas" id="alternativas"></div>
+          </div>
+
+          <div class="tarjeta">
+            <div class="campo" style="margin-bottom:.75rem">
+              <span style="font-weight:600">Modo del recorrido</span>
+              <div class="segmentado" role="group" aria-label="Modo del recorrido">
+                <button type="button" data-modo="simulacion" aria-pressed="true">Simulación</button>
+                <button type="button" data-modo="gps" aria-pressed="false">GPS real</button>
+              </div>
+              <span class="ayuda" id="texto-modo">La bicicleta avanza sola por la ruta. Úsalo para practicar y para las pruebas con usuarios.</span>
+            </div>
+            <p class="texto-suave" id="falta-iniciar">Elige un destino y una ruta para poder iniciar.</p>
+            <button class="btn btn--primario btn--bloque" id="iniciar" type="button" disabled>Iniciar recorrido</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HU-023, 024 · Permisos y estado ============ -->
+      <section class="vista" id="vista-permisos" aria-labelledby="t-permisos" hidden>
+        <div class="contenedor">
+          <h1 id="t-permisos">Antes de salir</h1>
+          <p class="texto-suave">HaptiRide necesita estos permisos para guiarte. Puedes revisarlos cuando quieras.</p>
+          <div class="tarjeta">
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Ubicación</strong><span id="permiso-ubicacion-texto">Comprobando…</span></div>
+              <button class="btn btn--secundario btn--sm" id="permiso-ubicacion" type="button">Permitir ubicación</button>
+            </div>
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Vibración</strong><span id="permiso-vibracion-texto">Comprobando…</span></div>
+              <button class="btn btn--secundario btn--sm" id="permiso-vibracion" type="button">Probar vibración</button>
+            </div>
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Pantalla encendida</strong><span id="permiso-pantalla-texto">Comprobando…</span></div>
+            </div>
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Conexión</strong><span id="permiso-conexion-texto">Comprobando…</span></div>
+            </div>
+          </div>
+          <div id="permisos-continuar" hidden>
+            <button class="btn btn--primario btn--bloque" id="continuar-recorrido" type="button">Continuar al recorrido</button>
+            <a class="btn btn--secundario btn--bloque" style="margin-top:.6rem" href="#mapa">Volver al mapa</a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HU-019, 039–043, 014, 026, 048, 022 · Recorrido ============ -->
+      <section class="vista" id="vista-navegacion" aria-labelledby="t-nav" hidden>
+        <div class="contenedor">
+          <h1 id="t-nav" class="solo-lector">Recorrido en curso</h1>
+          <div class="maniobra" id="maniobra" role="status" aria-live="polite">
+            <div class="maniobra__flecha" id="maniobra-flecha" aria-hidden="true">↑</div>
+            <div>
+              <div class="maniobra__dist" id="maniobra-dist">–</div>
+              <div class="maniobra__texto" id="maniobra-texto">Preparando el recorrido…</div>
+            </div>
+          </div>
+          <div id="aviso-nav"></div>
+          <div>
+            <div class="dato-fila"><span>Destino: <strong id="nav-destino">–</strong></span><span>Restante: <strong id="nav-restante">–</strong></span><span>Modo: <strong id="nav-modo">–</strong></span></div>
+            <div class="progreso" style="margin-top:.5rem" aria-hidden="true"><span id="nav-progreso"></span></div>
+          </div>
+          <div class="mapa mapa--nav" id="mapa-nav" aria-label="Mapa del recorrido"></div>
+          <div class="controles">
+            <button class="btn btn--secundario" id="pausar" type="button">Pausar</button>
+            <button class="btn btn--primario" id="sin-mirar" type="button">Modo sin mirar</button>
+            <button class="btn btn--secundario" id="recalcular" type="button" hidden>Recalcular</button>
+            <button class="btn btn--peligro" id="finalizar" type="button">Finalizar</button>
+          </div>
+
+          <details class="tarjeta pruebas" id="panel-pruebas" open>
+            <summary>Simulación de eventos (para pruebas)</summary>
+            <p class="texto-suave" style="margin-top:.75rem">Estos botones reproducen situaciones del recorrido para practicar las señales sin salir a la calle.</p>
+            <div class="campo" id="bloque-velocidad">
+              <span style="font-weight:600">Velocidad de la simulación</span>
+              <div class="segmentado" role="group" aria-label="Velocidad de la simulación">
+                <button type="button" data-vel="1" aria-pressed="true">1x</button>
+                <button type="button" data-vel="3" aria-pressed="false">3x</button>
+                <button type="button" data-vel="6" aria-pressed="false">6x</button>
+              </div>
+            </div>
+            <div class="controles">
+              <button class="btn btn--ambar btn--sm" data-vehiculo="izquierda" type="button">Vehículo por la izquierda</button>
+              <button class="btn btn--ambar btn--sm" data-vehiculo="derecha" type="button">Vehículo por la derecha</button>
+              <button class="btn btn--secundario btn--sm" id="simular-desvio" type="button">Simular desvío</button>
+              <button class="btn btn--secundario btn--sm" id="simular-perdida" type="button">Simular pérdida de señal</button>
+            </div>
+          </details>
+
+          <div class="tarjeta">
+            <h2 style="font-size:1rem">Señales recibidas</h2>
+            <ul class="registro" id="registro" aria-live="off"></ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- ============ HU-022 · Historial ============ -->
+      <section class="vista" id="vista-historial" aria-labelledby="t-historial" hidden>
+        <div class="contenedor">
+          <h1 id="t-historial">Historial</h1>
+          <div id="lista-historial"></div>
+        </div>
+      </section>
+
+      <!-- ============ HU-003 · Perfil ============ -->
+      <section class="vista" id="vista-perfil" aria-labelledby="t-perfil" hidden>
+        <div class="contenedor">
+          <h1 id="t-perfil">Tu perfil</h1>
+          <p class="texto-suave">Elige el tipo de ciclista que mejor te describe. Puedes cambiarlo cuando quieras; tu historial no se borra.</p>
+          <div class="perfiles" role="group" aria-label="Tipo de ciclista">
+            <button class="perfil-op" type="button" data-perfil="urbano" aria-pressed="false"><span class="ico" aria-hidden="true">🚲</span><strong>Ciclista urbano</strong><br><span>Uso mi bicicleta para estudiar, trabajar o hacer mis actividades diarias.</span></button>
+            <button class="perfil-op" type="button" data-perfil="repartidor" aria-pressed="false"><span class="ico" aria-hidden="true">📦</span><strong>Repartidor</strong><br><span>Hago entregas (delivery) en bicicleta y voy a destinos nuevos a diario.</span></button>
+            <button class="perfil-op" type="button" data-perfil="compartida" aria-pressed="false"><span class="ico" aria-hidden="true">🔄</span><strong>Bicicleta compartida</strong><br><span>Uso bicicletas de alquiler o compartidas para viajes cortos.</span></button>
+          </div>
+          <p class="texto-suave" id="estado-perfil" role="status" aria-live="polite"></p>
+        </div>
+      </section>
+
+      <!-- ============ HU-044, 045, 046 · Configuración de señales ============ -->
+      <section class="vista" id="vista-configuracion" aria-labelledby="t-config" hidden>
+        <div class="contenedor">
+          <h1 id="t-config">Configuración de señales</h1>
+          <div class="tarjeta">
+            <div class="opcion">
+              <div class="opcion__texto"><strong id="etq-activas">Señales de vibración</strong><span>Si las desactivas, verás las indicaciones solo en pantalla.</span></div>
+              <label class="interruptor"><input type="checkbox" id="cfg-activas" aria-labelledby="etq-activas"><span></span></label>
+            </div>
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Intensidad</strong><span>El navegador no controla la fuerza del motor: una intensidad mayor se siente como pulsos más largos.</span></div>
+              <div class="segmentado" role="group" aria-label="Intensidad" data-cfg="intensidad">
+                <button type="button" data-valor="baja">Baja</button><button type="button" data-valor="media">Media</button><button type="button" data-valor="alta">Alta</button>
+              </div>
+            </div>
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Duración de cada pulso</strong><span>Corta 120 ms · Media 200 ms · Larga 300 ms.</span></div>
+              <div class="segmentado" role="group" aria-label="Duración de cada pulso" data-cfg="duracion">
+                <button type="button" data-valor="corta">Corta</button><button type="button" data-valor="media">Media</button><button type="button" data-valor="larga">Larga</button>
+              </div>
+            </div>
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Cantidad de pulsos</strong><span>Cuántas veces se repite cada señal de maniobra.</span></div>
+              <div class="segmentado" role="group" aria-label="Cantidad de repeticiones" data-cfg="pulsos">
+                <button type="button" data-valor="1">1</button><button type="button" data-valor="2">2</button><button type="button" data-valor="3">3</button>
+              </div>
+            </div>
+            <div class="opcion">
+              <div class="opcion__texto"><strong>Intervalo entre pulsos</strong><span>El silencio entre un pulso y el siguiente.</span></div>
+              <div class="segmentado" role="group" aria-label="Intervalo entre pulsos" data-cfg="intervalo">
+                <button type="button" data-valor="corto">Corto</button><button type="button" data-valor="medio">Medio</button><button type="button" data-valor="largo">Largo</button>
+              </div>
+            </div>
+          </div>
+          <div class="tarjeta">
+            <h2 style="font-size:1rem">Resumen</h2>
+            <p id="cfg-resumen" role="status" aria-live="polite"></p>
+            <div class="campo">
+              <label for="cfg-probar-tipo">Señal para probar</label>
+              <select class="entrada" id="cfg-probar-tipo">
+                <option value="izquierda">Girar a la izquierda</option>
+                <option value="derecha">Girar a la derecha</option>
+                <option value="recto">Continuar recto</option>
+                <option value="vehiculo">Aviso de vehículo</option>
+                <option value="llegada">Llegada</option>
+              </select>
+            </div>
+            <div class="controles" style="grid-template-columns:1fr 1fr">
+              <button class="btn btn--primario" id="cfg-probar" type="button">Probar</button>
+              <button class="btn btn--secundario" id="cfg-restablecer" type="button">Restablecer</button>
+            </div>
+            <p class="texto-suave" id="cfg-aviso" style="margin-top:1rem"></p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- HU-026 · Modo sin mirar -->
+  <div class="sin-mirar" id="capa-sin-mirar" role="dialog" aria-modal="true" aria-labelledby="sm-texto" hidden>
+    <div class="sin-mirar__flecha" id="sm-flecha" aria-hidden="true">↑</div>
+    <div class="sin-mirar__dist" id="sm-dist">–</div>
+    <p class="sin-mirar__estado" id="sm-texto">Guarda el celular. Te avisaremos con vibraciones.</p>
+    <p class="sin-mirar__estado" id="sm-pantalla"></p>
+    <button class="btn btn--secundario" id="salir-sin-mirar" type="button">Salir del modo sin mirar</button>
+  </div>
+
+  <!-- Diálogo reutilizable (HU-022 confirmar, HU-042 llegada) -->
+  <div class="dialogo-fondo" id="dialogo" hidden>
+    <div class="dialogo" role="alertdialog" aria-modal="true" aria-labelledby="dialogo-titulo" aria-describedby="dialogo-texto">
+      <h2 id="dialogo-titulo"></h2>
+      <p class="texto-suave" id="dialogo-texto"></p>
+      <div class="dialogo__acciones" id="dialogo-acciones"></div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+  <script src="../js/vendor/leaflet.js"></script>
+  <script src="../js/senales.js"></script>
+  <script src="../js/app.js"></script>
+</body>
+</html>

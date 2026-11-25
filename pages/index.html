@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HaptiRide · Navega en bicicleta sin mirar la pantalla</title>
+  <meta name="description" content="HaptiRide guía al ciclista con vibraciones del celular: cada giro tiene su propio ritmo, para que no tengas que mirar la pantalla ni usar audífonos.">
+  <meta name="theme-color" content="#0B1216">
+  <link rel="icon" href="../favicon.ico">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+  <header class="encabezado">
+    <div class="contenedor encabezado__fila">
+      <a class="marca" href="index.html" aria-label="HaptiRide, inicio">
+        <img src="../assets/icons/logo.svg" alt="" width="34" height="34">
+        HaptiRide
+      </a>
+      <button class="boton-menu" id="boton-menu" aria-expanded="false" aria-controls="menu" aria-label="Abrir menú"><span></span></button>
+      <nav class="menu" id="menu" aria-label="Menú principal">
+        <a href="#como-funciona">Cómo funciona</a>
+        <a href="#probar">Probar señales</a>
+        <a href="#preguntas">Preguntas</a>
+        <a href="#soporte">Soporte</a>
+        <a class="btn btn--primario btn--sm" href="app.html">Abrir la app</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="contenido">
+    <!-- HU-004 · Comprender la propuesta de valor -->
+    <section class="hero" aria-labelledby="titulo-hero">
+      <div class="contenedor hero__rejilla">
+        <div>
+          <span class="etiqueta">Navegación háptica para ciclistas</span>
+          <h1 id="titulo-hero">Llega a tu destino <em>sin mirar la pantalla</em></h1>
+          <p class="hero__texto">HaptiRide convierte cada indicación de la ruta en una vibración del celular. Cada maniobra tiene su propio ritmo, así mantienes la vista en la pista y los oídos atentos al tránsito.</p>
+          <div class="hero__acciones">
+            <a class="btn btn--primario" href="#probar">Probar señales</a>
+            <a class="btn btn--secundario" href="app.html">Abrir la app</a>
+          </div>
+          <h2 class="solo-lector">Riesgos que HaptiRide busca reducir</h2>
+          <ul class="riesgos">
+            <li>Mirar el mapa del celular mientras pedaleas te quita la vista de la pista.</li>
+            <li>Los audífonos tapan bocinas, frenos y avisos de otros vehículos.</li>
+            <li>Detenerte a cada rato para revisar la ruta te hace perder tiempo y te expone en la vía.</li>
+          </ul>
+        </div>
+        <div class="hero__visual" aria-hidden="true">
+          <div class="tarjeta">
+            <div class="manubrio" id="manubrio-hero">
+              <span class="puno puno--izq"></span>
+              <span class="manubrio__barra"></span>
+              <span class="manubrio__centro">📱</span>
+              <span class="puno puno--der"></span>
+              <span class="manubrio__etq manubrio__etq--izq">Izquierda · 2 pulsos</span>
+              <span class="manubrio__etq manubrio__etq--der">Derecha · 3 pulsos</span>
+            </div>
+            <p class="hero__aviso">El celular va en el soporte del manubrio o en el bolsillo y vibra con un ritmo distinto para cada indicación.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HU-002 · Conocer cómo funciona HaptiRide -->
+    <section class="seccion seccion--alt" id="como-funciona" aria-labelledby="titulo-como">
+      <div class="contenedor">
+        <span class="etiqueta">Cómo funciona</span>
+        <h2 class="titulo-seccion" id="titulo-como">Tres pasos para pedalear sin mirar</h2>
+        <div class="rejilla rejilla--3 pasos">
+          <article class="tarjeta paso">
+            <h3>Elige tu destino</h3>
+            <p class="texto-suave">Busca el lugar en el mapa, revisa las alternativas de ruta y elige la que prefieras antes de salir.</p>
+          </article>
+          <article class="tarjeta paso">
+            <h3>Guarda el celular</h3>
+            <p class="texto-suave">Activa el modo sin mirar: la pantalla queda en negro, se mantiene encendida y el celular sigue tu posición.</p>
+          </article>
+          <article class="tarjeta paso">
+            <h3>Siente cada indicación</h3>
+            <p class="texto-suave">Antes de cada giro recibes un preaviso y, al llegar a la esquina, la vibración de la maniobra.</p>
+          </article>
+        </div>
+
+        <h3 style="margin-top:2.5rem">Guía de patrones</h3>
+        <p class="texto-suave">Cada señal se reconoce por su ritmo. Puedes probarlas todas en la siguiente sección.</p>
+        <div class="tabla-envoltura">
+          <table class="tabla-patrones" id="tabla-patrones">
+            <caption class="solo-lector">Patrones de vibración de HaptiRide</caption>
+            <thead><tr><th scope="col">Señal</th><th scope="col">Ritmo</th><th scope="col">Qué significa</th></tr></thead>
+            <tbody>
+              <tr><td>Girar a la izquierda</td><td><span class="ritmo" aria-label="2 pulsos cortos"><i class="c"></i><i class="c"></i></span> 2 pulsos</td><td>Gira a la izquierda en la próxima esquina.</td></tr>
+              <tr><td>Girar a la derecha</td><td><span class="ritmo" aria-label="3 pulsos cortos"><i class="c"></i><i class="c"></i><i class="c"></i></span> 3 pulsos</td><td>Gira a la derecha en la próxima esquina.</td></tr>
+              <tr><td>Continuar recto</td><td><span class="ritmo" aria-label="1 pulso largo"><i class="L"></i></span> 1 pulso largo</td><td>Sigue por la misma vía.</td></tr>
+              <tr><td>Preaviso de giro</td><td><span class="ritmo" aria-label="1 pulso corto"><i class="c"></i></span> 1 pulso corto</td><td>Se acerca una maniobra (unos 90 m antes).</td></tr>
+              <tr><td>Aviso de vehículo</td><td><span class="ritmo" aria-label="5 pulsos rápidos"><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i><i class="r"></i></span> 5 rápidos</td><td>Atención: vehículo cercano.</td></tr>
+              <tr><td>Llegada</td><td><span class="ritmo" aria-label="largo, corto, largo"><i class="L"></i><i class="c"></i><i class="L"></i></span> largo-corto-largo</td><td>Llegaste a tu destino.</td></tr>
+              <tr><td>Señal perdida</td><td><span class="ritmo" aria-label="2 pulsos largos"><i class="L"></i><i class="L"></i></span> 2 largos</td><td>Se perdió la ubicación o la conexión.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- HU-013 · Probar los patrones de vibración antes de salir -->
+    <section class="seccion" id="probar" aria-labelledby="titulo-probar">
+      <div class="contenedor">
+        <span class="etiqueta">Pruébalo ahora</span>
+        <h2 class="titulo-seccion" id="titulo-probar">Probar señales</h2>
+        <p class="texto-suave">Toca una señal para sentirla en tu celular. El manubrio de la ilustración se ilumina al mismo ritmo.</p>
+        <div class="probador">
+          <div class="tarjeta">
+            <div class="botones-patron" id="botones-patron">
+              <button class="boton-patron" data-patron="izquierda" aria-pressed="false"><span class="icono" aria-hidden="true">←</span><span class="nombre">Izquierda</span><span class="desc">2 pulsos</span></button>
+              <button class="boton-patron" data-patron="derecha" aria-pressed="false"><span class="icono" aria-hidden="true">→</span><span class="nombre">Derecha</span><span class="desc">3 pulsos</span></button>
+              <button class="boton-patron" data-patron="recto" aria-pressed="false"><span class="icono" aria-hidden="true">↑</span><span class="nombre">Recto</span><span class="desc">1 pulso largo</span></button>
+              <button class="boton-patron" data-patron="preaviso" aria-pressed="false"><span class="icono" aria-hidden="true">…</span><span class="nombre">Preaviso</span><span class="desc">1 pulso corto</span></button>
+              <button class="boton-patron" data-patron="vehiculo" aria-pressed="false"><span class="icono" aria-hidden="true">⚠</span><span class="nombre">Vehículo</span><span class="desc">5 rápidos</span></button>
+              <button class="boton-patron" data-patron="llegada" aria-pressed="false"><span class="icono" aria-hidden="true">◎</span><span class="nombre">Llegada</span><span class="desc">largo-corto-largo</span></button>
+            </div>
+          </div>
+          <div class="tarjeta">
+            <div class="manubrio" id="manubrio-prueba" aria-hidden="true">
+              <span class="puno puno--izq"></span>
+              <span class="manubrio__barra"></span>
+              <span class="manubrio__centro">📱</span>
+              <span class="puno puno--der"></span>
+              <span class="manubrio__etq manubrio__etq--izq">Izquierda</span>
+              <span class="manubrio__etq manubrio__etq--der">Derecha</span>
+            </div>
+            <p class="estado-senal" id="estado-senal" role="status" aria-live="polite">Elige una señal para probarla.</p>
+            <div class="aviso" id="aviso-vibracion"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Preguntas frecuentes (complementario, no es HU core) -->
+    <section class="seccion seccion--alt" id="preguntas" aria-labelledby="titulo-faq">
+      <div class="contenedor">
+        <span class="etiqueta">Preguntas frecuentes</span>
+        <h2 class="titulo-seccion" id="titulo-faq">Lo que suelen preguntarnos</h2>
+        <div class="faq">
+          <details><summary>¿Necesito comprar un dispositivo?</summary><p>No. En esta etapa HaptiRide usa la vibración de tu celular. Un accesorio para el manubrio es una etapa futura del proyecto.</p></details>
+          <details><summary>¿En qué celulares vibra?</summary><p>La vibración funciona en navegadores que permiten la Vibration API, como Chrome, Edge o Samsung Internet en Android. En iPhone y en computadoras la página muestra las señales de forma visual.</p></details>
+          <details><summary>¿Tengo que instalar algo?</summary><p>No. La app web se abre desde el navegador. Para el mapa y el cálculo de rutas necesitas conexión a internet; para practicar puedes usar el recorrido de demostración.</p></details>
+          <details><summary>¿Se guardan mis datos?</summary><p>Tu perfil, tu configuración y tu historial se guardan solo en este navegador. No creamos cuentas ni enviamos tu ubicación a un servidor propio.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- HU-029 · Solicitar soporte o contacto -->
+    <section class="seccion" id="soporte" aria-labelledby="titulo-soporte">
+      <div class="contenedor rejilla rejilla--2">
+        <div>
+          <span class="etiqueta">Soporte</span>
+          <h2 class="titulo-seccion" id="titulo-soporte">¿Tienes un problema o una sugerencia?</h2>
+          <p class="texto-suave">Cuéntanos qué pasó y por dónde quieres que te respondamos. Te daremos un código para que hagas seguimiento.</p>
+        </div>
+        <div class="tarjeta">
+          <form id="form-soporte" novalidate>
+            <div class="campo">
+              <label for="asunto">Asunto</label>
+              <select class="entrada" id="asunto" name="asunto" required aria-describedby="error-asunto">
+                <option value="">Elige un asunto</option>
+                <option>La vibración no funciona</option>
+                <option>Problema con el mapa o la ruta</option>
+                <option>Problema con la ubicación</option>
+                <option>Sugerencia</option>
+                <option>Otro</option>
+              </select>
+              <span class="error-campo" id="error-asunto"></span>
+            </div>
+            <div class="campo">
+              <label for="descripcion">Descripción</label>
+              <textarea class="entrada" id="descripcion" name="descripcion" required minlength="15" aria-describedby="ayuda-desc error-descripcion"></textarea>
+              <span class="ayuda" id="ayuda-desc">Mínimo 15 caracteres. Si puedes, indica tu celular y navegador.</span>
+              <span class="error-campo" id="error-descripcion"></span>
+            </div>
+            <fieldset class="campo" style="border:0;padding:0;margin:0 0 1.1rem">
+              <legend>Medio de respuesta</legend>
+              <div class="segmentado" role="group" aria-label="Medio de respuesta">
+                <button type="button" data-medio="correo" aria-pressed="true">Correo</button>
+                <button type="button" data-medio="whatsapp" aria-pressed="false">WhatsApp</button>
+              </div>
+            </fieldset>
+            <div class="campo">
+              <label for="contacto" id="etq-contacto">Correo electrónico</label>
+              <input class="entrada" id="contacto" name="contacto" type="email" autocomplete="email" required aria-describedby="error-contacto">
+              <span class="error-campo" id="error-contacto"></span>
+            </div>
+            <button class="btn btn--primario btn--bloque" type="submit">Enviar solicitud</button>
+          </form>
+          <div class="confirmacion" id="confirmacion-soporte" hidden tabindex="-1">
+            <h3>¡Solicitud registrada!</h3>
+            <p class="texto-suave">Tu código de seguimiento es</p>
+            <span class="codigo" id="codigo-soporte"></span>
+            <p class="texto-suave" id="resumen-soporte"></p>
+            <button class="btn btn--secundario" id="nueva-solicitud" type="button">Enviar otra solicitud</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <div class="contenedor pie__fila">
+      <span>© 2026 HaptiRide · Proyecto académico UPC · HCI for UX Design</span>
+      <span><a href="app.html">App web</a> · <a href="#soporte">Soporte</a> · <a href="https://github.com/diegopuma927-boop/haptiride" rel="noopener">Repositorio</a></span>
+    </div>
+  </footer>
+
+  <script src="../js/senales.js"></script>
+  <script src="../js/main.js"></script>
+</body>
+</html>
