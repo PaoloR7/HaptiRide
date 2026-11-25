@@ -118,7 +118,7 @@
     const t = $('toast');
     t.textContent = texto; t.hidden = false;
     clearTimeout(tToast);
-    tToast = setTimeout(function () { t.hidden = true; }, 3200);
+    tToast = setTimeout(function () { t.hidden = true; }, texto.length > 70 ? 6000 : 3200);
   }
 
   /* ---------- Diálogo accesible ---------- */
@@ -196,6 +196,15 @@
     } else actualizarEstado();
   }
 
+  // Instrucciones según el sistema: cada uno desbloquea la ubicación en un lugar distinto
+  const ES_IOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const ES_ANDROID = /Android/.test(navigator.userAgent);
+  function comoActivarUbicacion() {
+    if (ES_IOS) return 'En iPhone: 1) Ajustes › Privacidad y seguridad › Localización: actívala y en «Sitios web de Safari» (o en Chrome, si usas Chrome) elige «Al usar la app». 2) En Safari toca «aA» › Ajustes del sitio web › Ubicación › «Preguntar». 3) Recarga la página.';
+    if (ES_ANDROID) return 'En Android: toca el ícono a la izquierda de la dirección › Permisos (o Configuración del sitio) › Ubicación › Permitir. Revisa también que la ubicación del celular esté encendida. Luego recarga la página.';
+    return 'Actívala desde el ícono del candado, a la izquierda de la dirección, y recarga la página.';
+  }
+
   function pintarPermisos() {
     const u = $('permiso-ubicacion-texto');
     const bU = $('permiso-ubicacion');
@@ -203,7 +212,7 @@
       desconocida: 'Aún no has dado permiso. Es necesario para el modo GPS real.',
       concedida: 'Permitida. HaptiRide puede seguir tu posición durante el recorrido.',
       simulada: 'En simulación no se usa tu ubicación real.',
-      denegada: 'Bloqueada. Actívala desde el candado de la barra de direcciones del navegador y vuelve a intentar.',
+      denegada: 'Bloqueada. ' + comoActivarUbicacion(),
       sinsenal: 'Permitida, pero no hay señal GPS en este momento.',
       nodisponible: 'Este navegador no ofrece ubicación.'
     };
@@ -222,7 +231,12 @@
   }
 
   $('permiso-ubicacion').addEventListener('click', function () {
-    pedirUbicacion().then(function () { toast('Ubicación permitida'); }).catch(function () {});
+    const boton = this;
+    boton.disabled = true; boton.textContent = 'Pidiendo ubicación…';
+    pedirUbicacion().then(function () { toast('Ubicación permitida'); }).catch(function (err) {
+      // Si el permiso ya fue rechazado, el navegador no vuelve a preguntar: hay que explicarlo
+      toast(err && err.code === 1 ? 'El navegador tiene la ubicación bloqueada. Sigue los pasos que aparecen arriba.' : 'No se pudo obtener la ubicación. Revisa que el GPS esté encendido.');
+    }).then(function () { boton.disabled = false; boton.textContent = 'Permitir ubicación'; });
   });
   $('permiso-vibracion').addEventListener('click', function () {
     const r = S.reproducir('derecha');
