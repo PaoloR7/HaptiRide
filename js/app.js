@@ -178,7 +178,9 @@
     pintarChip($('chip-ubicacion'), textoUbic[0], textoUbic[1]);
     if (!S.puedeVibrar) pintarChip($('chip-vibracion'), 'error', 'Sin vibración');
     else if (!cfg.activas) pintarChip($('chip-vibracion'), 'aviso', 'Vibración apagada');
-    else pintarChip($('chip-vibracion'), 'ok', 'Vibración lista');
+    else if (S.leerConfirmacion() === 'si') pintarChip($('chip-vibracion'), 'ok', 'Vibración lista');
+    else if (S.leerConfirmacion() === 'no') pintarChip($('chip-vibracion'), 'error', 'Vibración no sentida');
+    else pintarChip($('chip-vibracion'), 'aviso', 'Vibración sin probar');
     pintarChip($('chip-conexion'), sistema.enLinea ? 'ok' : 'error', sistema.enLinea ? 'En línea' : 'Sin conexión');
     pintarPermisos();
   }
@@ -223,7 +225,16 @@
     const cfg = S.leerConfig();
     $('permiso-vibracion-texto').textContent = !S.puedeVibrar
       ? 'Este navegador no puede vibrar (iPhone o computadora). Verás las señales en pantalla. Para sentirlas usa Chrome en Android.'
-      : (cfg.activas ? 'Disponible. Toca «Probar vibración» para comprobarlo.' : 'Disponible, pero desactivada en Configuración.');
+      : !cfg.activas ? 'Desactivada en Configuración: verás las indicaciones solo en pantalla.'
+      : { si: 'Confirmaste que la sientes. Puedes probarla otra vez cuando quieras.',
+          no: 'No la sentiste: el celular está bloqueando la vibración. Toca «Probar vibración» para ver qué revisar.' }[S.leerConfirmacion()]
+        || 'Sin probar. Toca «Probar vibración» y confirma si la sientes: la página no puede saber si tu celular tiene la vibración apagada.';
+    $('permiso-vibracion').hidden = !S.puedeVibrar || !cfg.activas;
+    const avisoVib = $('aviso-vib-continuar');
+    avisoVib.hidden = vibracionAsegurada() || !S.puedeVibrar;
+    avisoVib.textContent = !cfg.activas
+      ? 'Las señales de vibración están desactivadas: las indicaciones se verán solo en pantalla.'
+      : 'Aún no confirmas que sientes la vibración. Puedes continuar, pero las indicaciones solo están aseguradas en pantalla.';
     $('permiso-pantalla-texto').textContent = ('wakeLock' in navigator)
       ? 'El modo sin mirar mantendrá la pantalla encendida (necesario para que el navegador siga vibrando).'
       : 'Este navegador no puede mantener la pantalla encendida: desactiva el bloqueo automático mientras pedaleas.';
@@ -242,8 +253,15 @@
   });
   $('permiso-vibracion').addEventListener('click', function () {
     const r = S.reproducir('derecha');
-    toast(r.vibro ? 'Vibrando: girar a la derecha (3 pulsos)' : 'Este navegador no vibró; verás las señales en pantalla');
+    if (r.vibro) S.preguntarVibracion($('permiso-vibracion-confirmar'), { tipo: 'derecha' });
+    else toast('Este navegador no vibró; verás las señales en pantalla');
   });
+
+  // La vibración solo se considera asegurada si el usuario confirmó que la siente
+  function vibracionAsegurada() {
+    return S.puedeVibrar && S.leerConfig().activas && S.leerConfirmacion() === 'si';
+  }
+  window.addEventListener('haptiride-confirmacion', function () { actualizarEstado(); });
 
   function pedirUbicacion() {
     return new Promise(function (ok, mal) {
@@ -276,6 +294,9 @@
       if (a.dataset.tab === v) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
     });
     document.title = 'HaptiRide · ' + TITULOS[v];
+    actualizarEstado();
+    // Si hay un recorrido activo y el usuario va a otra sección, puede volver con un toque
+    $('volver-recorrido').hidden = !recorrido || v === 'navegacion';
     if (v === 'panel') pintarPanel();
     if (v === 'mapa') iniciarMapaPlan();
     if (v === 'permisos') { $('permisos-continuar').hidden = !pendienteIniciar; revisarPermisoUbicacion(); }
@@ -374,6 +395,7 @@
   $('cfg-probar').addEventListener('click', function () {
     const tipo = $('cfg-probar-tipo').value;
     const r = S.reproducir(tipo);
+    if (r.vibro && S.leerConfirmacion() !== 'si') S.preguntarVibracion($('cfg-confirmar'), { tipo: tipo });
     toast(S.PATRONES[tipo].nombre + (r.vibro ? ' · vibrando' : ' · solo en pantalla'));
   });
   $('cfg-restablecer').addEventListener('click', function () {
@@ -712,7 +734,8 @@
   $('iniciar').addEventListener('click', function () {
     if ($('iniciar').disabled) return;
     // HU-023: revisar permisos antes de navegar (la primera vez, o si falta la ubicación en modo GPS)
-    if (!permisosRevisados || (plan.modo === 'gps' && sistema.ubicacion !== 'concedida')) {
+    const vibracionSinProbar = S.puedeVibrar && S.leerConfig().activas && !S.leerConfirmacion();
+    if (!permisosRevisados || vibracionSinProbar || (plan.modo === 'gps' && sistema.ubicacion !== 'concedida')) {
       pendienteIniciar = true;
       location.hash = '#permisos';
       return;
@@ -780,6 +803,7 @@
     $('simular-desvio').hidden = plan.modo !== 'simulacion';
     $('recalcular').hidden = true;
     $('aviso-nav').innerHTML = '';
+    pintarAvisoVibNav();
     $('pausar').textContent = 'Pausar';
     seleccionarEn(null, 'data-vel', '1');
     sistema.ubicacion = plan.modo === 'simulacion' ? 'simulada' : 'concedida';
@@ -804,9 +828,44 @@
     registrar(S.PATRONES[tipo].nombre, texto + (r.vibro ? '' : ' · solo en pantalla'));
     destello();
   }
+  // Aviso al iniciar si la vibración no está confirmada; se puede probar ahí mismo sin salir del recorrido
+  function pintarAvisoVibNav() {
+    const cont = $('aviso-vib-nav');
+    if (vibracionAsegurada()) { cont.innerHTML = ''; return; }
+    const cfg = S.leerConfig();
+    const puedeProbar = S.puedeVibrar && cfg.activas;
+    cont.innerHTML = '<div class="aviso aviso--ambar">' +
+      (!S.puedeVibrar ? 'Este navegador no puede vibrar: cada aviso parpadeará en pantalla.'
+        : !cfg.activas ? 'Las señales de vibración están desactivadas: cada aviso parpadeará en pantalla.'
+        : 'La vibración no está confirmada en este celular: cada aviso parpadeará en pantalla.') +
+      (puedeProbar ? ' <button type="button" class="enlace-boton" id="probar-vib-nav">Probar la vibración</button>' : '') +
+      '<div id="confirmar-vib-nav" style="margin-top:.6rem"></div></div>';
+    const b = $('probar-vib-nav');
+    if (b) b.addEventListener('click', function () {
+      S.reproducir('derecha');
+      S.preguntarVibracion($('confirmar-vib-nav'), {
+        tipo: 'derecha',
+        alResponder: function (r) { if (r === 'si') setTimeout(function () { $('aviso-vib-nav').innerHTML = ''; }, 1500); }
+      });
+    });
+  }
+
+  // Si la vibración no está asegurada, cada señal hace parpadear la tarjeta (y el modo sin mirar) para no perder la indicación
+  let tDestello = null;
   function destello() {
-    const m = $('maniobra');
-    m.animate && m.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.03)' }, { transform: 'scale(1)' }], { duration: 300 });
+    const m = $('maniobra'), capa = $('capa-sin-mirar');
+    if (vibracionAsegurada()) {
+      m.animate && m.animate([{ transform: 'scale(1)' }, { transform: 'scale(1.03)' }, { transform: 'scale(1)' }], { duration: 300 });
+      return;
+    }
+    clearInterval(tDestello);
+    let n = 0;
+    tDestello = setInterval(function () {
+      const on = n % 2 === 0;
+      m.classList.toggle('destello', on);
+      capa.classList.toggle('destello', on);
+      if (++n >= 6) { clearInterval(tDestello); m.classList.remove('destello'); capa.classList.remove('destello'); }
+    }, 220);
   }
 
   // Avance de la simulación

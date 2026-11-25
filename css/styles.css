@@ -421,3 +421,25 @@ textarea.entrada { min-height: 120px; resize: vertical; }
   .chip__largo { display: none; }
   .chip__corto { display: inline; }
 }
+
+/* Confirmación de la vibración (HU-013, HU-024) */
+.pregunta-vib { display: grid; gap: .6rem; padding: .9rem 1rem; border-radius: var(--radio-sm); background: var(--asfalto); border: 2px solid var(--lima); }
+.pregunta-vib__botones { display: flex; flex-wrap: wrap; gap: .5rem; }
+.pasos-vibracion { margin: .6rem 0 .9rem; padding-left: 1.2rem; display: grid; gap: .4rem; font-size: .9rem; }
+.pasos-vibracion ul { margin: .35rem 0 0; padding-left: 1rem; }
+.enlace-boton { background: none; border: 0; padding: 0; color: var(--lima); text-decoration: underline; cursor: pointer; font-weight: 600; }
+.opcion__extra { flex: 1 1 100%; }
+.opcion__extra:empty { display: none; }
+/* Refuerzo visual cuando la vibración no está confirmada */
+.maniobra.destello { background: var(--tiza); box-shadow: 0 0 0 4px var(--lima); }
+.sin-mirar.destello { background: #1f2a12; }
+
+/* Volver al recorrido desde otras secciones */
+.volver-recorrido {
+  position: fixed; left: 16px; right: 16px; bottom: calc(70px + env(safe-area-inset-bottom)); z-index: 46;
+  display: flex; align-items: center; justify-content: center; gap: .5rem; min-height: 48px;
+  border-radius: 999px; background: var(--lima); color: var(--asfalto); font-weight: 700; text-decoration: none;
+  box-shadow: var(--sombra-caja);
+}
+.volver-recorrido span { color: var(--rojo); }
+@media (min-width: 900px) { .volver-recorrido { left: auto; right: 24px; bottom: 24px; padding: 0 1.25rem; } }

@@ -8,7 +8,7 @@
   <meta name="theme-color" content="#0B1216">
   <link rel="icon" href="../favicon.ico">
   <link rel="stylesheet" href="../css/leaflet.css">
-  <link rel="stylesheet" href="../css/styles.css?v=5">
+  <link rel="stylesheet" href="../css/styles.css?v=9">
 </head>
 <body>
   <a class="saltar" href="#app-principal">Saltar al contenido</a>
@@ -27,6 +27,8 @@
         </div>
       </div>
     </header>
+
+    <a class="volver-recorrido" id="volver-recorrido" href="#navegacion" hidden><span aria-hidden="true">●</span> Recorrido en curso · Volver</a>
 
     <nav class="tabbar" aria-label="Secciones de la app">
       <a href="#panel" data-tab="panel"><span class="ico" aria-hidden="true">⌂</span>Panel</a>
@@ -119,6 +121,7 @@
             <div class="opcion">
               <div class="opcion__texto"><strong>Vibración</strong><span id="permiso-vibracion-texto">Comprobando…</span></div>
               <button class="btn btn--secundario btn--sm" id="permiso-vibracion" type="button">Probar vibración</button>
+              <div id="permiso-vibracion-confirmar" class="opcion__extra" aria-live="polite"></div>
             </div>
             <div class="opcion">
               <div class="opcion__texto"><strong>Pantalla encendida</strong><span id="permiso-pantalla-texto">Comprobando…</span></div>
@@ -128,6 +131,7 @@
             </div>
           </div>
           <div id="permisos-continuar" hidden>
+            <div class="aviso aviso--ambar" id="aviso-vib-continuar" hidden style="margin-bottom:.75rem"></div>
             <button class="btn btn--primario btn--bloque" id="continuar-recorrido" type="button">Continuar al recorrido</button>
             <a class="btn btn--secundario btn--bloque" style="margin-top:.6rem" href="#mapa">Volver al mapa</a>
           </div>
@@ -145,6 +149,7 @@
               <div class="maniobra__texto" id="maniobra-texto">Preparando el recorrido…</div>
             </div>
           </div>
+          <div id="aviso-vib-nav"></div>
           <div id="aviso-nav"></div>
           <div>
             <div class="dato-fila"><span>Destino: <strong id="nav-destino">–</strong></span><span>Restante: <strong id="nav-restante">–</strong></span><span>Modo: <strong id="nav-modo">–</strong></span></div>
@@ -260,6 +265,7 @@
               <button class="btn btn--secundario" id="cfg-restablecer" type="button">Restablecer</button>
             </div>
             <p class="texto-suave" id="cfg-aviso" style="margin-top:1rem"></p>
+            <div id="cfg-confirmar" aria-live="polite"></div>
           </div>
         </div>
       </section>
@@ -287,7 +293,7 @@
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <script src="../js/vendor/leaflet.js"></script>
-  <script src="../js/senales.js?v=5"></script>
-  <script src="../js/app.js?v=5"></script>
+  <script src="../js/senales.js?v=9"></script>
+  <script src="../js/app.js?v=9"></script>
 </body>
 </html>

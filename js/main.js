@@ -40,8 +40,13 @@
     aviso.className = 'aviso aviso--ambar';
     aviso.innerHTML = 'Las señales de vibración están desactivadas en tu configuración. <a href="app.html#configuracion">Actívalas aquí</a>.';
   } else {
-    aviso.textContent = 'Tu navegador puede vibrar. Si no sientes nada, revisa que el celular no esté en modo silencio sin vibración.';
+    aviso.textContent = 'Toca una señal: tu celular debería vibrar. Si no sientes nada, revisa que la vibración del celular esté activada.';
   }
+
+  // ¿Sentiste la vibración? El navegador no sabe si el celular tiene la vibración apagada
+  const confirmar = document.getElementById('confirmar-vibracion');
+  const confirmada = S.leerConfirmacion();
+  if (S.puedeVibrar && config.activas && confirmada) S.preguntarVibracion(confirmar, { estado: confirmada });
 
   const botones = document.querySelectorAll('[data-patron]');
   botones.forEach(function (boton) {
@@ -54,6 +59,10 @@
         alTerminar: function () { boton.setAttribute('aria-pressed', 'false'); }
       });
       estado.textContent = p.nombre + ': ' + p.descripcion + (r.vibro ? ' (vibrando)' : ' (solo visual)');
+      // Mientras no confirme que la siente, se pregunta después de cada prueba
+      if (r.vibro && S.leerConfirmacion() !== 'si') {
+        S.preguntarVibracion(confirmar, { tipo: tipo, reproducir: { alPulsar: S.animarManubrio(manubrio, tipo) } });
+      }
     });
   });
 
@@ -162,7 +171,7 @@
 
     document.getElementById('codigo-soporte').textContent = codigo;
     document.getElementById('resumen-soporte').textContent =
-      'Asunto: ' + solicitud.asunto + '. Te responderemos por ' + (medio === 'correo' ? 'correo a ' : 'WhatsApp al ') + solicitud.contacto + '.';
+      'Asunto: ' + solicitud.asunto + '. Medio de respuesta indicado: ' + (medio === 'correo' ? 'correo, ' : 'WhatsApp, ') + solicitud.contacto + '.';
     form.hidden = true;
     confirmacion.hidden = false;
     confirmacion.focus();

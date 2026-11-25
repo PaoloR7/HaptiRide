@@ -7,7 +7,7 @@
   <meta name="description" content="HaptiRide guía al ciclista con vibraciones del celular: cada giro tiene su propio ritmo, para que no tengas que mirar la pantalla ni usar audífonos.">
   <meta name="theme-color" content="#0B1216">
   <link rel="icon" href="../favicon.ico">
-  <link rel="stylesheet" href="../css/styles.css?v=5">
+  <link rel="stylesheet" href="../css/styles.css?v=9">
 </head>
 <body>
   <a class="saltar" href="#contenido">Saltar al contenido</a>
@@ -135,6 +135,7 @@
             </div>
             <p class="estado-senal" id="estado-senal" role="status" aria-live="polite">Elige una señal para probarla.</p>
             <div class="aviso" id="aviso-vibracion"></div>
+            <div id="confirmar-vibracion" style="margin-top:.75rem" aria-live="polite"></div>
           </div>
         </div>
       </div>
@@ -161,6 +162,7 @@
           <span class="etiqueta">Soporte</span>
           <h2 class="titulo-seccion" id="titulo-soporte">¿Tienes un problema o una sugerencia?</h2>
           <p class="texto-suave">Cuéntanos qué pasó y por dónde quieres que te respondamos. Te daremos un código para que hagas seguimiento.</p>
+          <p class="aviso aviso--ambar" style="font-size:.88rem">Prototipo académico: la solicitud se guarda solo en este navegador y no se envía a un servidor. Si necesitas ayuda real, escríbele directamente al equipo.</p>
         </div>
         <div class="tarjeta">
           <form id="form-soporte" novalidate>
@@ -201,6 +203,7 @@
             <p class="texto-suave">Tu código de seguimiento es</p>
             <span class="codigo" id="codigo-soporte"></span>
             <p class="texto-suave" id="resumen-soporte"></p>
+            <p class="aviso aviso--ambar" style="font-size:.85rem;text-align:left">Prototipo académico: esta solicitud quedó guardada solo en este navegador y no se envió al equipo, así que nadie te responderá automáticamente.</p>
             <button class="btn btn--secundario" id="nueva-solicitud" type="button">Enviar otra solicitud</button>
           </div>
         </div>
@@ -211,11 +214,11 @@
   <footer class="pie">
     <div class="contenedor pie__fila">
       <span>© 2026 HaptiRide · Proyecto académico UPC · HCI for UX Design</span>
-      <span><a href="app.html">App web</a> · <a href="#soporte">Soporte</a> · <a href="https://github.com/diegopuma927-boop/haptiride" rel="noopener">Repositorio</a></span>
+      <span><a href="app.html">App web</a> · <a href="#soporte">Soporte</a> · <a href="https://github.com/PaoloR7/HaptiRide" rel="noopener">Repositorio</a></span>
     </div>
   </footer>
 
-  <script src="../js/senales.js?v=5"></script>
-  <script src="../js/main.js?v=5"></script>
+  <script src="../js/senales.js?v=9"></script>
+  <script src="../js/main.js?v=9"></script>
 </body>
 </html>

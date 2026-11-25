@@ -49,6 +49,15 @@ favicon.ico, .gitignore
 
 La configuración cambia la duración de cada pulso (corta, media o larga), las repeticiones (1, 2 o 3) y el intervalo entre pulsos. El navegador no puede cambiar la fuerza del motor, así que la **intensidad** se representa con pulsos más largos o más cortos.
 
+## Confirmación de la vibración
+
+El navegador no puede saber si el celular tiene la vibración apagada: `navigator.vibrate()` responde que vibró aunque el motor no se mueva. Por eso la página pregunta **«¿Sentiste la vibración?»** después de cada prueba hasta que el usuario confirme.
+
+- **No:** se muestran pasos según la marca del celular (Samsung, Xiaomi, Motorola/Pixel, Huawei), más ahorro de batería, No molestar y abrir en Chrome. Botón «Probar de nuevo».
+- **Chip de estado:** Vibración sin probar (ámbar) · Vibración lista (verde, solo si confirmó) · Vibración no sentida (rojo).
+- **Antes del primer recorrido** se pide probarla en «Antes de salir». No bloquea: si no la confirma, se avisa que las indicaciones solo están aseguradas en pantalla.
+- **Durante el recorrido**, si la vibración no está confirmada, cada señal hace parpadear la tarjeta y el modo sin mirar. Se puede probar desde el mismo aviso.
+
 ## Dónde está cada HU core (30)
 
 | HU | Título resumido | Dónde |
